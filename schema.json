@@ -1,0 +1,21 @@
+{
+   "$schema":"http://json-schema.org/draft-03/schema",
+   "title":"root",
+   "description":"aaa",
+   "type":"object",
+   "a":"a",
+   "properties":{
+      "subjects":{
+         "description":"none",
+         "type":"array",
+         "items":{
+            "type":"string"
+         },
+         "required":true
+      },
+      "metadata":{
+         "type":"string",
+         "required":true
+      }
+   }
+}
