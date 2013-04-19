@@ -17,5 +17,11 @@
          "type":"string",
          "required":true
       }
-   }
+   },
+   "links":[
+      {
+         "rel":"describedby",
+         "href":"{+($schema)}"
+      }
+   ]
 }
