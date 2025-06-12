@@ -1,0 +1,52 @@
+<html>
+<head><title></title></head>
+<body>
+<script>
+  {
+  "@context": {
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "blobtype": "https://specstack.moukaeritai.work/blobtype/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    /* 便利なエイリアス */
+    "typeCode": { "@id": "skos:notation", "@type": "xsd:integer" },
+    "byteLength": { "@id": "blobtype:byteLength", "@type": "xsd:integer" },
+    "format": { "@id": "blobtype:format" },
+    "describes": { "@id": "blobtype:describes", "@type": "@id" }
+  },
+
+  /* ---- ConceptScheme（コード表） ---- */
+  "@graph": [
+    {
+      "@id": "blobtype:scheme",
+      "@type": "skos:ConceptScheme",
+      "skos:prefLabel": {
+        "en": "SpecStack BLOB Type Codes",
+        "ja": "SpecStack BLOB タイプコード表"
+      },
+      "skos:scopeNote": {
+        "en": "Integer codes used alongside binary blobs to indicate how the octet stream should be interpreted."
+      }
+    },
+
+    /* ---- Concept: コード 111 ---- */
+    {
+      "@id": "blobtype:111",
+      "@type": ["blobtype:BlobType", "skos:Concept"],
+      "skos:prefLabel": {
+        "en": "MBR sector (512 bytes)",
+        "ja": "MBR セクタ (512 バイト)"
+      },
+      "typeCode": 111,
+      "byteLength": 512,
+      "format": "binary/octet-stream",
+      "describes": "https://en.wikipedia.org/wiki/Master_boot_record",
+      "skos:inScheme": "blobtype:scheme"
+    }
+
+    /* ここに 112, 113 ... の Concept を追加 */
+  ]
+}
+</script>  
+</body>
+</html>
