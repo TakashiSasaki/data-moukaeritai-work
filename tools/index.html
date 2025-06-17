@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em 0; text-align: center; }
+        .container { max-width: 960px; margin: 2em auto; padding: 1em; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        button { padding: 0.5em 1em; font-size: 1em; }
+        p { margin: 0.5em 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tools</h1>
+    </header>
+    <div class="container">
+        <button id="generate">Generate UUID</button>
+        <p>UUID: <span id="uuid"></span></p>
+        <p>Converted: <span id="converted"></span></p>
+    </div>
+    <script>
+        const map = {
+            '0':'G','1':'H','2':'J','3':'K','4':'L','5':'M','6':'N','7':'P',
+            '8':'Q','9':'R','a':'S','b':'T','c':'U','d':'V','e':'W','f':'X',
+            'A':'S','B':'T','C':'U','D':'V','E':'W','F':'X'
+        };
+        function uuidv4(){
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+        document.getElementById('generate').addEventListener('click', () => {
+            const uuid = uuidv4();
+            document.getElementById('uuid').textContent = uuid;
+            const converted = uuid.replace(/[0-9a-fA-F]/g,ch => map[ch]);
+            document.getElementById('converted').textContent = converted;
+        });
+    </script>
+</body>
+</html>

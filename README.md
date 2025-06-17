@@ -11,3 +11,7 @@ This repository serves as a central registry for various schemas, taxonomies, an
 - **/examples**: Contains example files demonstrating the usage or implementation of the schemas and taxonomies.
 
 Feel free to explore the directories and contribute by following the guidelines (to be defined).
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
