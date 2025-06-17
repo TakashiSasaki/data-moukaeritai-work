@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xml:base="https://specstack.moukaeritai.work/filename/">
+
+  <!-- Concept Scheme -->
+  <skos:ConceptScheme rdf:about="https://specstack.moukaeritai.work/filename">
+    <skos:prefLabel xml:lang="en">Special Filenames for SQLite Databases</skos:prefLabel>
+    <skos:hasTopConcept rdf:resource="https://specstack.moukaeritai.work/filename/TMUSWWLM"/>
+  </skos:ConceptScheme>
+
+  <!-- Concept -->
+  <skos:Concept rdf:about="https://specstack.moukaeritai.work/filename/TMUSWWLM">
+    <skos:prefLabel xml:lang="en">Workspace SQLite Database</skos:prefLabel>
+    <skos:notation>TMUSWWLM.sqlite</skos:notation>
+    <skos:inScheme rdf:resource="https://specstack.moukaeritai.work/filename"/>
+    <skos:note xml:lang="en">This filename was derived from the UUID b5caee45-df40-42dd-968c-cd46dafb0dff.</skos:note>
+  </skos:Concept>
+
+</rdf:RDF>
