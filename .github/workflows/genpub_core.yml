@@ -1,10 +1,7 @@
 name: Split genpub_core directory into its own branch
 
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'genpub_core/**'
+  workflow_dispatch:  # 手動実行のみ
 
 jobs:
   split-genpub-core:
@@ -14,7 +11,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history required for subtree split
+          fetch-depth: 0  # Full history is required for subtree split
 
       - name: Configure Git identity
         run: |
