@@ -1,0 +1,27 @@
+name: Split genpub_core directory into its own branch
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'genpub_core/**'
+
+jobs:
+  split-genpub-core:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history required for subtree split
+
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Split genpub_core directory and push to genpub_core branch
+        run: |
+          git subtree split --prefix=genpub_core -b genpub_core
+          git push origin genpub_core --force
