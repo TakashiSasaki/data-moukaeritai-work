@@ -6,24 +6,27 @@ The GenPub Core schema captures minimal metadata for distributed data lineage.
 Each schema version is uniquely identified by a persistent URI (`SCHEMA_URI`) and its derived UUIDv5 (`SCHEMA_ID`).
 
 Fields:
-  - gen_name    : Identifier of the data generator (e.g., sensor42).
-  - gen_domain  : Domain or organization of the generator (e.g., example.org).
+  - gen_name    : Identifier of the data generator (Unicode string; excludes control and format characters).
+  - gen_domain  : Domain or organization of the generator (Unicode string; excludes control and format characters).
   - gen_time    : UTC timestamp when data was created (ISO 8601 string).
   - pub_locator : Generic URI of the publication endpoint or medium
                   (e.g., udp://host:port, s3://bucket/object, file:///path).
   - pub_time    : UTC timestamp when data was published.
   - data        : Raw payload or reference (bytes, text, JSON, or hash).
   - id          : UUID4 primary key for internal indexing and tracking.
-                   Ensures each record has a globally unique identifier
-                   independent of its content or timestamps.
+                   Ensures each record has a globally unique identifier independent of its content or timestamps.
+
+Validation:
+  - `gen_name` and `gen_domain` are validated to ensure they are non-empty Unicode strings
+    without control characters (C0 and C1 blocks) or format characters (Unicode category Cf).
 
 Usage example:
     from datetime import datetime
     from genpub_core import Record, URI
 
     record = Record(
-        gen_name="sensor42",
-        gen_domain="example.org",
+        gen_name="センサーA",
+        gen_domain="例示.org",
         gen_time=datetime.utcnow(),
         pub_locator=URI("udp://192.0.2.15:54321"),
         pub_time=datetime.utcnow(),
@@ -32,6 +35,7 @@ Usage example:
 
 """
 from __future__ import annotations
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import NewType
@@ -45,6 +49,16 @@ SCHEMA_ID: UUID = uuid5(NAMESPACE_URL, SCHEMA_URI)
 # Alias for a generic URI type (e.g., udp://, s3://, file://)
 URI = NewType("URI", str)
 
+# Regex to detect invalid characters: control (C0: U+0000-U+001F, C1: U+007F-U+009F)
+# and format characters (Unicode category Cf)
+_INVALID_NAME_CH_PATTERN = re.compile(
+    r"[\x00-\x1F\x7F-\x9F"  # C0 and C1 control
+    r"\u200B-\u200F"          # ZERO WIDTH and directional marks
+    r"\u202A-\u202E"          # bidirectional overrides
+    r"\u2060-\u2064"          # format control
+    r"\uFEFF]"                 # ZERO WIDTH NO-BREAK SPACE (BOM)
+)
+
 @dataclass(slots=True)
 class Record:
     """
@@ -52,30 +66,36 @@ class Record:
     Represents a single unit of data generation and publication metadata.
 
     Attributes:
-        gen_name      : Name of the data generator (unique within domain).
-        gen_domain    : Domain or organization of the generator.
+        gen_name      : Name of the data generator (Unicode; validated).
+        gen_domain    : Domain or organization of the generator (Unicode; validated).
         gen_time      : Timestamp when data was generated (UTC).
         pub_locator   : Publication endpoint as a URI-like locator.
         pub_time      : Timestamp when data was published (UTC).
         data          : Payload or reference (raw bytes, JSON text, or hash).
         id            : UUID4 primary key for internal indexing and tracking.
-                        Provides a collision-resistant identifier,
-                        enabling easy lookup, deduplication, and
-                        cross-referencing of records.
     """
-    gen_name: str        # Name of the generator (unique per domain)
-    gen_domain: str      # Domain or organization of the generator
+    gen_name: str        # Name of the generator (Unicode; validated)
+    gen_domain: str      # Domain or organization of the generator (Unicode; validated)
     gen_time: datetime   # Timestamp when data was generated (UTC)
     pub_locator: URI     # Publication endpoint as a URI-like locator
     pub_time: datetime   # Timestamp when data was published (UTC)
     data: bytes          # Payload or reference (raw bytes, JSON text, or hash)
     id: UUID = field(default_factory=uuid4)
-                           # Internal UUID4 identifier for record tracking
+
+    def __post_init__(self) -> None:
+        """
+        Validate that gen_name and gen_domain do not contain disallowed characters.
+        """
+        for attr in ("gen_name", "gen_domain"):
+            val = getattr(self, attr)
+            if not isinstance(val, str) or not val:
+                raise ValueError(f"{attr} must be a non-empty string")
+            if _INVALID_NAME_CH_PATTERN.search(val):
+                raise ValueError(f"{attr} contains invalid characters: {val!r}")
 
     def to_dict(self) -> dict:
         """
         Serialize Record to dict with ISO-formatted timestamps and schema info.
-        Useful for JSON conversion or storing in document stores.
         """
         return {
             "schema_uri": SCHEMA_URI,
