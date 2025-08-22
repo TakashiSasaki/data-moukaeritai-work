@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "db-moukaeritai"
+version = "0.1.0"
+description = "Database management tool"
+authors = ["TakashiSasaki"]
+readme = "README.md"
+packages = [{include = "db_moukaeritai", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
